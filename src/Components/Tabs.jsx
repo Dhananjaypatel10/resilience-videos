@@ -7,14 +7,15 @@ const Tabs = () => {
 
    const dispatch= useDispatch();
 
-    const activeTabs = useSelector((state) => state.search.activeTabs);
+    const activeTab = useSelector((state) => state.search.activeTab);
 
   return (
     <div>
       <div style ={{
          display :"flex",
           gap: "10px",
-         padding: "15px"
+         padding: "15px",
+         justifyContent:"center"
       }}>
         {tabs.map((ele) =>
         {
@@ -22,14 +23,14 @@ const Tabs = () => {
            style ={{
               margin: "5px",
               fontSize: "18px",
-              background: activeTabs === ele ? "blue" : "#222",
+              background: activeTab === ele ? "blue" : "#222",
               color: "white",
               padding: "10px",
               border: "none",
               cursor: "pointer",
               borderRadius: "5px"
            }}>
-            {ele}</button>
+            {ele.toUpperCase()}</button>
         })}
       </div>
     </div>

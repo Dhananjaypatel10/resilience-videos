@@ -1,3 +1,4 @@
+
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 
@@ -42,6 +43,7 @@ const ResultGrid = () => {
             thumbnail: item.urls.small,
             src: item.urls.full,
           }));
+
         } else if (activeTab === "videos") {
           console.log("Calling API videos");
 
@@ -54,18 +56,19 @@ const ResultGrid = () => {
             type: "videos",
             title: item.title || "Untitled Video",
             thumbnail: item.thumbnail || item.poster,
-            poster: item.poster,
-            playback_id: item.playback_id,
             views: item.views,
+            videoUrl: item.urls?.mp4_preview || item.urls?.mp4,
           }));
         }
 
         dispatch(setResults(data));
+
       } catch (err) {
         console.error("API Error:", err);
 
         dispatch(setError(err.message || "Something went wrong"));
         dispatch(setResults([]));
+
       } finally {
         dispatch(setLoading(false));
       }
@@ -74,11 +77,20 @@ const ResultGrid = () => {
     getData();
   }, [query, activeTab, dispatch]);
 
+   {loading && (
+        <h3 style={{ textAlign: "center" }}>
+          Loading...
+        </h3>
+   )}
+
+    {error && (
+        <p style={{ color: "red" }}>
+          {error}
+        </p>
+      )}
+
   return (
     <div>
-
-       {/* {loading && <h3 style={{textAlign:'center'}}>Loading...</h3>} */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <div
         style={{
@@ -114,19 +126,29 @@ const ResultGrid = () => {
                 }}
               />
             ) : (
-              <img
-                src={item.thumbnail}
-                alt={item.title}
+              <video
+                autoPlay
+                muted
+                loop
+                poster={item.thumbnail}
                 style={{
                   width: "100%",
                   height: "180px",
                   objectFit: "cover",
                   borderRadius: "8px",
                 }}
-              />
+              >
+                <source
+                  src={item.videoUrl}
+                  type="video/mp4"
+                />
+                Your browser does not support video playback!
+              </video>
             )}
 
-            <p style={{ color: "#222" }}>{item.title}</p>
+            <p style={{ color: "#222" }}>
+              {item.title}
+            </p>
 
             {item.type === "videos" && (
               <p style={{ color: "#666" }}>

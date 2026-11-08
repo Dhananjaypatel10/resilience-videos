@@ -13,8 +13,8 @@ export async function fetchPhotos(query, page = 1, per_page = 20) {
 
 export async function fetchVideos(query, per_page = 15) {
   const response = await axios.get("https://api.coverr.co/videos", {
-    params: { query, per_page },
-    headers: { Authorization: coverr_key },
+    params: { query, per_page, urls: true },
+    headers: { "x-api-key": coverr_key },
   });
   return response.data;
 }
