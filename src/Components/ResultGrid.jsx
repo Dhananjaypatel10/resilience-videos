@@ -10,6 +10,8 @@ import {
   setResults,
 } from "../app/features/searchSlice";
 
+import ResultCard from "./ResultCard";
+
 const ResultGrid = () => {
   const dispatch = useDispatch();
 
@@ -32,8 +34,6 @@ const ResultGrid = () => {
         let data = [];
 
         if (activeTab === "photos") {
-          console.log("Calling API photos");
-
           const response = await fetchPhotos(query);
 
           data = response.results.map((item) => ({
@@ -45,11 +45,7 @@ const ResultGrid = () => {
           }));
 
         } else if (activeTab === "videos") {
-          console.log("Calling API videos");
-
           const response = await fetchVideos(query);
-
-          console.log("First video:", response.hits?.[0]);
 
           data = response.hits.map((item) => ({
             id: item.id,
@@ -65,7 +61,6 @@ const ResultGrid = () => {
 
       } catch (err) {
         console.error("API Error:", err);
-
         dispatch(setError(err.message || "Something went wrong"));
         dispatch(setResults([]));
 
@@ -77,87 +72,21 @@ const ResultGrid = () => {
     getData();
   }, [query, activeTab, dispatch]);
 
-   {loading && (
+  return (
+    <div>
+      {loading && (
         <h3 style={{ textAlign: "center" }}>
           Loading...
         </h3>
-   )}
+      )}
 
-    {error && (
+      {error && (
         <p style={{ color: "red" }}>
           {error}
         </p>
       )}
 
-  return (
-    <div>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "row",
-          gap: "10px",
-          flexWrap: "wrap",
-          padding: "20px",
-        }}
-      >
-        {results.map((item) => (
-          <div
-            key={item.id}
-            style={{
-              width: "250px",
-              background: "#fff",
-              borderRadius: "12px",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              padding: "10px",
-            }}
-          >
-            {item.type === "photos" ? (
-              <img
-                src={item.src}
-                alt={item.title}
-                style={{
-                  width: "100%",
-                  height: "180px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
-              />
-            ) : (
-              <video
-                autoPlay
-                muted
-                loop
-                poster={item.thumbnail}
-                style={{
-                  width: "100%",
-                  height: "180px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
-              >
-                <source
-                  src={item.videoUrl}
-                  type="video/mp4"
-                />
-                Your browser does not support video playback!
-              </video>
-            )}
-
-            <p style={{ color: "#222" }}>
-              {item.title}
-            </p>
-
-            {item.type === "videos" && (
-              <p style={{ color: "#666" }}>
-                Views: {item.views}
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
+      <ResultCard results={results} />
     </div>
   );
 };
